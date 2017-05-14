@@ -34,4 +34,6 @@ func main() {
 
 * [ ] result
 
+```html
 <iframe height=800 width=800 src="qrcode.gif">
+```
