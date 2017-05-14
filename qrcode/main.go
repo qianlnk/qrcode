@@ -12,6 +12,11 @@ func main() {
 		fmt.Printf("Usage:\n qrcode <string>\n")
 	}
 
+	if len(os.Args[1]) > 60 {
+		fmt.Println("\033[31mERR: max context length is 60.\033[0m")
+		return
+	}
+
 	qr := qrcode.NewQRCode(os.Args[1], false)
 	qr.Output()
 }

@@ -36,3 +36,7 @@ func main() {
 
 ![](qrcode.gif)
 
+## Note
+
+max context length is 60.
+
