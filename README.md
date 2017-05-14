@@ -5,7 +5,7 @@ a tool to generate qrcode and print it on console.
 ## Install
 
 ```shell
-go get -u github.com/qianlnk/qrcode/..
+go get -u github.com/qianlnk/qrcode/...
 ```
 
 ## Usage
