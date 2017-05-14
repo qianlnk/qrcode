@@ -10,13 +10,13 @@ go get -u github.com/qianlnk/qrcode/..
 
 ## Usage
 
-* [X] cmd
+* [ ] cmd
 
 ```shell
 qrcode 'https://github.com/qianlnk/qrcode'
 ```
 
-* [X] package
+* [ ] package
 
 ```golang
 package main
@@ -34,6 +34,5 @@ func main() {
 
 * [ ] result
 
-```html
-<iframe height=800 width=800 src="qrcode.gif">
-```
+![](qrcode.gif)
+
