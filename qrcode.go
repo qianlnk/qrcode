@@ -6,15 +6,25 @@ import (
 	"image"
 	"image/color"
 	"image/png"
+	"math/rand"
 	"os"
+	"time"
 
 	qrcode "github.com/skip2/go-qrcode"
 )
 
+// const (
+// 	QR_CODE_SIZE        = 256
+// 	SHRINK_QR_CODE_SIZE = 35
+// 	MARGIN              = 29
+//	MULTIPLE		 	= 6
+// )
+
 const (
-	QR_CODE_SIZE        = 256
-	SHRINK_QR_CODE_SIZE = 35
-	MARGIN              = 29
+	QR_CODE_SIZE        = 301
+	SHRINK_QR_CODE_SIZE = 39
+	MARGIN              = 21
+	MULTIPLE            = 7
 )
 
 type QRCode struct {
@@ -34,8 +44,6 @@ func NewQRCode(uri string, genImg bool) *QRCode {
 	}
 
 	qr.genQRCode()
-	qr.binarization()
-	qr.shrink()
 
 	return qr
 }
@@ -53,6 +61,18 @@ func (qr *QRCode) genQRCode() error {
 		return err
 	}
 
+	qr.img = img
+
+	if qr.genImg {
+		newPng, _ := os.Create("qrcode.png")
+		defer newPng.Close()
+		png.Encode(newPng, img)
+	}
+
+	return nil
+}
+
+func (qr *QRCode) SetImage(img image.Image) error {
 	qr.img = img
 
 	if qr.genImg {
@@ -92,7 +112,7 @@ func (qr *QRCode) binarization() {
 func (qr *QRCode) shrink() {
 	for x := 0; x < QR_CODE_SIZE; x++ {
 		cal := 1
-		for y := MARGIN + 1; y < QR_CODE_SIZE-MARGIN; y += 6 {
+		for y := MARGIN + 1; y < QR_CODE_SIZE-MARGIN; y += MULTIPLE {
 			qr.tmpShrinkPoints[x][cal] = qr.points[x][y]
 			cal++
 		}
@@ -100,7 +120,7 @@ func (qr *QRCode) shrink() {
 
 	for y := 1; y < SHRINK_QR_CODE_SIZE-1; y++ {
 		row := 1
-		for x := MARGIN + 1; x < QR_CODE_SIZE-MARGIN; x += 6 {
+		for x := MARGIN + 1; x < QR_CODE_SIZE-MARGIN; x += MULTIPLE {
 			qr.shrinkPoints[row][y] = qr.tmpShrinkPoints[x][y]
 			row++
 		}
@@ -109,10 +129,14 @@ func (qr *QRCode) shrink() {
 
 //Output 控制台输出二维码
 func (qr *QRCode) Output() {
+	qr.binarization()
+	qr.shrink()
+
 	for x := 0; x < SHRINK_QR_CODE_SIZE; x++ {
 		for y := 0; y < SHRINK_QR_CODE_SIZE; y++ {
 			if qr.shrinkPoints[x][y] == 1 {
-				fmt.Print("\033[40;37m  \033[0m")
+				//fmt.Print("\033[40;40m  \033[0m")
+				randColor()
 			} else {
 				fmt.Print("\033[47;30m  \033[0m")
 			}
@@ -121,8 +145,18 @@ func (qr *QRCode) Output() {
 	}
 }
 
+func randColor() {
+	cls := []int{41, 42, 43, 44, 45, 46}
+	rand.Seed(time.Now().UnixNano())
+	i := rand.Intn(1)
+	fmt.Printf("\033[40;%dm  \033[0m", cls[i])
+}
+
 //Debug 调试二维码二值化及缩小过程
 func (qr *QRCode) Debug() {
+	qr.binarization()
+	//qr.shrink()
+
 	src, _ := os.Create("src.txt")
 	for i := 0; i < len(qr.points); i++ {
 		var line string
